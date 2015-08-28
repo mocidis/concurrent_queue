@@ -33,12 +33,11 @@ void queue_init(queue_t *queue, int cap, int data_size, pj_pool_t *p_mempool) {
     queue->in = 0;
     queue->out = 0;
 
-#define QEPOOL_SIZE(queue) (5*queue->capacity)
-    qepool_init(&(queue->qepool), QEPOOL_SIZE(queue), data_size, p_mempool);
-
-    pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-    pthread_cond_t cond_full = PTHREAD_COND_INITIALIZER;
-    pthread_cond_t cond_empty = PTHREAD_COND_INITIALIZER;
+//#define QEPOOL_SIZE(queue) (5*queue->capacity)
+//    qepool_init(&(queue->qepool), QEPOOL_SIZE(queue), data_size, p_mempool);
+    pthread_mutex_init(&queue->mutex, NULL);
+    pthread_cond_init(&queue->cond_full, NULL);
+    pthread_cond_init(&queue->cond_empty, NULL);
 }
 
 void queue_enqueue(queue_t *queue, void *value)
@@ -46,7 +45,6 @@ void queue_enqueue(queue_t *queue, void *value)
     pthread_mutex_lock(&(queue->mutex));
     while (queue->size == queue->capacity)
         pthread_cond_wait(&(queue->cond_full), &(queue->mutex));
-    //printf("enqueue %d\n", *(int *)value);
     queue->buffer[queue->in] = value;
     ++ queue->size;
     ++ queue->in;

@@ -13,6 +13,7 @@
 #define QUEUE_CAP 100
 
 #define QE_EXIT 18834
+#if 0
 typedef struct __event {
   int is_used;
   int type;
@@ -29,11 +30,12 @@ typedef struct {
     int count;
     pj_mutex_t *p_mutex;
 } qepool_t;
+#endif
 
 typedef struct __queue queue_t;
 struct __queue
 {
-    qepool_t qepool;
+//    qepool_t qepool;
     void **buffer;
     int capacity;
     int size;
@@ -49,7 +51,7 @@ void *queue_dequeue(queue_t *queue);
 int queue_size(queue_t *queue);
 void queue_init(queue_t *queue, int cap, int data_size, pj_pool_t *p_mempool);
 
-void qepool_init(qepool_t *p_qepool, int capacity, int data_size, pj_pool_t *p_mempool);
-queue_event_t *qepool_get(qepool_t *p_qepool);
-void qepool_free(qepool_t *p_qepool, queue_event_t *p_event);
+//void qepool_init(qepool_t *p_qepool, int capacity, int data_size, pj_pool_t *p_mempool);
+//queue_event_t *qepool_get(qepool_t *p_qepool);
+//void qepool_free(qepool_t *p_qepool, queue_event_t *p_event);
 #endif
