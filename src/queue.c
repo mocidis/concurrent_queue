@@ -43,8 +43,10 @@ void queue_init(queue_t *queue, int cap, int data_size, pj_pool_t *p_mempool) {
 void queue_enqueue(queue_t *queue, void *value)
 {
     pthread_mutex_lock(&(queue->mutex));
-    while (queue->size == queue->capacity)
+    while (queue->size == queue->capacity) {
+        pj_thread_sleep(2);
         pthread_cond_wait(&(queue->cond_full), &(queue->mutex));
+    }
     queue->buffer[queue->in] = value;
     ++ queue->size;
     ++ queue->in;
@@ -57,7 +59,7 @@ void *queue_dequeue(queue_t *queue)
 {
     pthread_mutex_lock(&(queue->mutex));
     while (queue->size == 0) {
-        usleep(2 * 1000);
+        pj_thread_sleep(2);
         pthread_cond_wait(&(queue->cond_empty), &(queue->mutex));
     }
     void *value = queue->buffer[queue->out];
